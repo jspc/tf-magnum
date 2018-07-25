@@ -1,0 +1,17 @@
+#cloud-config
+coreos:
+  units:
+  - name: magnum-container.service
+    command: start
+    content: |
+      [Unit]
+      Description=Magnum
+      Requires=docker.service
+      After=docker.service
+      [Service]
+      Restart=always
+      ExecStart=/usr/bin/docker run --name magnum -p 0.0.0.0:8765:8765 beamly/magnum
+      ExecStop=/usr/bin/docker stop -t 2 magnum
+      ExecStopPost=/usr/bin/docker rm -f magnum
+      [Install]
+      WantedBy=default.target
